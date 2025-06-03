@@ -10,15 +10,15 @@ import java.util.Date;
 @Component
 public class JwtUtil {
 
-    // Chave secreta para assinar o token (deve ser mais complexa e secreta em produção)
+    // Chave secreta usada para assinar o token JWT
     private final String secret = "chave-super-secreta-do-matheus-1234567890";
     private final Key key = Keys.hmacShaKeyFor(secret.getBytes());
 
 
-    // Tempo de validade do token (exemplo: 10 horas)
+    // Tempo de expiração do token: 10 horas (em milissegundos)
     private final long expirationMillis = 36000000;
 
-    // Gera token JWT com o username
+    // Gera um token JWT com base no nome do usuário (email)
     public String generateToken(String username) {
         return Jwts.builder()
                 .setSubject(username)
@@ -28,7 +28,7 @@ public class JwtUtil {
                 .compact();
     }
 
-    // Retorna o username (subject) do token
+    // Extrai o username (email) do token
     public String extractUsername(String token) {
         return Jwts.parserBuilder()
                 .setSigningKey(key)
@@ -38,7 +38,7 @@ public class JwtUtil {
                 .getSubject();
     }
 
-    // Verifica se o token é válido (assinatura e data)
+    // Verifica se o token é válido (assinatura e expiração)
     public boolean validateToken(String token) {
         try {
             Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
